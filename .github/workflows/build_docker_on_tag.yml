@@ -1,0 +1,58 @@
+name: Build Porsche Design System
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Checkout build code
+        uses: actions/checkout@v4
+
+      - name: Download Porsche Design System v${{ github.ref_name }}
+        run: |
+          wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
+          unzip -q components-react-v${{ github.ref_name }}.zip
+          mv ${{ github.workspace }}/porsche-design-system-components-react-v${{ github.ref_name }}/ ${{ github.workspace }}/porsche-design-system/
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+          cache-dependency-path: "${{ github.workspace }}/porsche-design-system/yarn.lock"
+
+      - name: Install dependencies and build Porsche Design System
+        run: |
+          cd ${{ github.workspace }}/porsche-design-system/
+          yarn install --frozen-lockfile
+          yarn build:core-dependencies
+          yarn build:components-prod
+          yarn build:components-js-prod
+          yarn build:components-react
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:v${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}:latest
+          context: ${{ github.workspace }}
