@@ -6,25 +6,32 @@ on:
       - "*"
 
 jobs:
-  check-release-and-build:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Download Porsche Design System v${{ github.ref_name }}
+        run: |
+          wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
+          unzip -q components-react-v${{ github.ref_name }}.zip
+          mv porsche-design-system-components-react-v${{ github.ref_name }}/ porsche-design-system/
+          cd porsche-design-system/
+
+      - name: Checkout build code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "yarn"
 
       - name: Install dependencies and build Porsche Design System
         run: |
           pwd
-          wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
-          unzip -q components-react-v${{ github.ref_name }}.zip
-          cd porsche-design-system-components-react-v${{ github.ref_name }}
+          ls -al
           yarn install --frozen-lockfile
           yarn build:core-dependencies
           yarn build:components-prod
           yarn build:components-js-prod
           yarn build:components-react
+          ls -al packages/assets/cdn/
