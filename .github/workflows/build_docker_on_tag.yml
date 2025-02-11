@@ -9,6 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout build code
+        uses: actions/checkout@v4
+
+      - run: |
+          pwd
+          ls -al
+
       - name: Download Porsche Design System v${{ github.ref_name }}
         run: |
           wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
@@ -18,15 +25,6 @@ jobs:
       - run: |
           pwd
           ls -al
-          tree
-
-      - name: Checkout build code
-        uses: actions/checkout@v4
-
-      - run: |
-          pwd
-          ls -al
-          tree
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
