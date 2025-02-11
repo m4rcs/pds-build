@@ -14,7 +14,6 @@ jobs:
           wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
           unzip -q components-react-v${{ github.ref_name }}.zip
           mv porsche-design-system-components-react-v${{ github.ref_name }}/ porsche-design-system/
-          cd porsche-design-system/
 
       - name: Checkout build code
         uses: actions/checkout@v4
@@ -24,9 +23,12 @@ jobs:
         with:
           node-version: "22"
           cache: "yarn"
+          cache-dependency-path: "porsche-design-system/yarn.lock"
 
       - name: Install dependencies and build Porsche Design System
         run: |
+          pwd
+          cd porsche-design-system/
           pwd
           ls -al
           yarn install --frozen-lockfile
