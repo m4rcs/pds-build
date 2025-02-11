@@ -15,8 +15,18 @@ jobs:
           unzip -q components-react-v${{ github.ref_name }}.zip
           mv porsche-design-system-components-react-v${{ github.ref_name }}/ porsche-design-system/
 
+      - run: |
+          pwd
+          ls -al
+          tree
+
       - name: Checkout build code
         uses: actions/checkout@v4
+
+      - run: |
+          pwd
+          ls -al
+          tree
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
