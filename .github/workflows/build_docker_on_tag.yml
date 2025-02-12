@@ -22,18 +22,18 @@ jobs:
         run: |
           wget -q https://github.com/porsche-design-system/porsche-design-system/archive/refs/tags/components-react-v${{ github.ref_name }}.zip
           unzip -q components-react-v${{ github.ref_name }}.zip
-          mv porsche-design-system-components-react-v${{ github.ref_name }}/ porsche-design-system/
+          mv ${{ github.workspace }}/porsche-design-system-components-react-v${{ github.ref_name }}/ ${{ github.workspace }}/porsche-design-system/
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: "yarn"
-          cache-dependency-path: "porsche-design-system/yarn.lock"
+          cache-dependency-path: "${{ github.workspace }}/porsche-design-system/yarn.lock"
 
       - name: Install dependencies and build Porsche Design System
         run: |
-          cd porsche-design-system/
+          cd ${{ github.workspace }}/porsche-design-system/
           yarn install --frozen-lockfile
           yarn build:core-dependencies
           yarn build:components-prod
@@ -46,6 +46,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: tree ${{ github.workspace }}/
 
       - name: Build and push
         uses: docker/build-push-action@v6
