@@ -47,7 +47,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: tree ${{ github.workspace }}/
+      - run: ls -al ${{ github.workspace }}/
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -55,3 +55,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: v${{ github.ref_name }},latest
+          context: ${{ github.workspace }}
