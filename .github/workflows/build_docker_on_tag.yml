@@ -53,6 +53,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:v${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/porsche-design-system:v${{ github.ref_name }}
+            ghcr.io/porsche-design-system:latest
           context: ${{ github.workspace }}
